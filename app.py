@@ -17,30 +17,51 @@ def index():
 
 @app.route("/create-bill", methods=["POST"])
 def create_bill():
-    email = request.form["email"]
-    payload = {
-        "userSecretKey": TOYYIBPAY_SECRET_KEY,
-        "categoryCode": CATEGORY_CODE,
-        "billName": "AI + Similarity Checker",
-        "billDescription": "RM1.50 for AI + Similarity Report",
-        "billPriceSetting": 1,
-        "billPayorInfo": 1,
-        "billAmount": 150,
-        "billReturnUrl": "https://schoolsolver.onrender.com/upload?email=" + email,
-        "billTo": email,
-        "billEmail": email,
-        "billExternalReferenceNo": "AICHECK123",
-        "billContentEmail": "Thank you for using our AI + Similarity service.",
-        "billChargeToCustomer": 1,
-    }
+    try:
+        print("🔥 Creating bill...")
 
-    r = requests.post("https://toyyibpay.com/index.php/api/createBill", data=payload)
-    result = r.json()
-    if "BillCode" in result[0]:
-        billcode = result[0]["BillCode"]
-        return redirect(f"https://toyyibpay.com/{billcode}")
-    else:
-        return "Error creating bill."
+        email = request.form.get("email")
+        print(f"📩 Email received: {email}")
+
+        if not email:
+            return "No email provided", 400
+
+        payload = {
+            "userSecretKey": TOYYIBPAY_SECRET_KEY,
+            "categoryCode": CATEGORY_CODE,
+            "billName": "AI + Similarity Checker",
+            "billDescription": "RM1.50 for AI + Similarity Report",
+            "billPriceSetting": 1,
+            "billPayorInfo": 1,
+            "billAmount": 150,  # 150 cents = RM1.50
+            "billReturnUrl": f"https://schoolsolver.onrender.com/upload?email={email}",
+            "billTo": email,
+            "billEmail": email,
+            "billExternalReferenceNo": "AICHECK123",
+            "billContentEmail": "Thank you for using our AI + Similarity service.",
+            "billChargeToCustomer": 1,
+        }
+
+        print("📤 Sending payload to ToyyibPay...")
+        print(payload)
+
+        response = requests.post("https://toyyibpay.com/index.php/api/createBill", data=payload)
+        print(f"✅ HTTP status: {response.status_code}")
+        print("🔁 Raw response text:", response.text)
+
+        result = response.json()
+        print("📦 Parsed JSON:", result)
+
+        if isinstance(result, list) and "BillCode" in result[0]:
+            billcode = result[0]["BillCode"]
+            print(f"🔗 Redirecting to ToyyibPay with BillCode: {billcode}")
+            return redirect(f"https://toyyibpay.com/{billcode}")
+        else:
+            return f"❌ Error creating bill: {result}", 500
+
+    except Exception as e:
+        print("🔥 Fatal Error in /create-bill:", str(e))
+        return f"❗ Internal Server Error: {str(e)}", 500
 
 @app.route("/upload")
 def upload_page():
