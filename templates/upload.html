@@ -1,0 +1,13 @@
+
+<!DOCTYPE html>
+<html>
+<head><title>Upload Document</title></head>
+<body>
+<h2>Upload your document</h2>
+<form action="/upload" method="POST" enctype="multipart/form-data">
+    <input type="file" name="file" accept=".pdf,.docx" required><br><br>
+    <input type="hidden" name="email" value="{{ email }}">
+    <button type="submit">Upload</button>
+</form>
+</body>
+</html>
