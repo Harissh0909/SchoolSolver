@@ -37,6 +37,7 @@ def create_bill():
             "billReturnUrl": f"https://schoolsolver.onrender.com/upload?email={email}",
             "billTo": email,
             "billEmail": email,
+            "billPhone": "0177484311",
             "billExternalReferenceNo": "AICHECK123",
             "billContentEmail": "Thank you for using our AI + Similarity service.",
             "billChargeToCustomer": 1,
