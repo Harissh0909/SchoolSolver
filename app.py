@@ -4,6 +4,7 @@ import os
 import requests
 
 app = Flask(__name__)
+app.config['DEBUG'] = True  # Add this line
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
